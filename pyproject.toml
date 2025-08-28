@@ -3,10 +3,10 @@ name = "mlops-health-insurance-proj"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.116.1",
-    "matplotlib>=3.10.5",
+    "matplotlib>=3.5,<=3.10",
     "mlflow>=3.3.1",
     "pandas>=2.3.2",
     "scikit-learn>=1.7.1",
@@ -20,4 +20,5 @@ dev = [
     "ipykernel>=6.30.1",
     "pytest>=8.4.1",
     "jupyterlab>=4.4.6",
+    "ydata-profiling>=4.16.1",
 ]
