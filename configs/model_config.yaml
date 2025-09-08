@@ -1,0 +1,21 @@
+best_model_name: XGBRegressor
+best_model_params: !!python/object/apply:collections.OrderedDict
+- - - learning_rate
+    - 0.2
+  - - max_depth
+    - 3
+  - - n_estimators
+    - 80
+performance:
+  mae: 2540.426183088474
+  mse: 18750732.49249882
+  r2: 0.8979585648487498
+  rmse: 4330.211599044418
+selected_features:
+- age
+- bmi
+- children
+- sex
+- smoker
+- region
+target_variable: charges

@@ -5,6 +5,18 @@ services:
     image: ghcr.io/mlflow/mlflow:latest
     ports:
       - "5555:5000"
-    command: mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow.db --default-artifact-root /tmp/mlruns
+    command: |
+      sh -c "
+      mkdir -p /mlflow/mlruns &&
+      chmod -R 777 /mlflow &&
+      mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root /mlflow/mlruns
+      "
     container_name: mlflow-tracking-server
-    
+    volumes:
+      - mlflow-data:/mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+
+volumes:
+  mlflow-data:
+    driver: local
