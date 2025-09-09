@@ -1,5 +1,4 @@
 # mlflow
-version: '3'
 services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
@@ -7,15 +6,16 @@ services:
       - "5555:5000"
     command: |
       sh -c "
-      mkdir -p /mlflow/mlruns &&
+      mkdir -p /mlflow/mlruns /mlflow/artifacts &&
       chmod -R 777 /mlflow &&
-      mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root /mlflow/mlruns
+      mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow/mlflow.db --artifacts-destination /mlflow/artifacts --serve-artifacts
       "
     container_name: mlflow-tracking-server
     volumes:
       - mlflow-data:/mlflow
     environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow/mlflow.db
+      - MLFLOW_ARTIFACTS_DESTINATION=/mlflow/artifacts
 
 volumes:
   mlflow-data:
