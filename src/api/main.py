@@ -4,8 +4,9 @@ from fastapi import FastAPI
 app = FastAPI(
     title="Health Insurance US Charges Prediction API",
     description="""API for predicting health insurance US charges using a trained machine learning model.""",
-    version="1.0.0"
+    version="1.0.0",
 )
+
 
 # Health check endpoint
 @app.get("/health", response_model=dict)
