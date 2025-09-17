@@ -38,3 +38,6 @@ mlflow-temp/
 mlflow.log
 mlflow.yaml
 mlflow.yml
+
+# Claude files
+CLAUDE.md
