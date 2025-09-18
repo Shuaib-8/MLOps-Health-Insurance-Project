@@ -156,14 +156,7 @@ def run_feature_engineering(
         logger.info(f"  Sex: {sex_mapping}")
         logger.info(f"  Smoker: {smoker_mapping}")
 
-    # Save the complete preprocessor with mappings
-    preprocessor_data = {
-        "preprocessor": preprocessor,
-        "encoding_strategy": strategy,
-        "feature_names": feature_names,
-    }
-
-    # Add and log encoding mappings for interpretability
+    # Log encoding mappings for interpretability
     if strategy == "ordinal":
         # Get the ordinal encoder for multi-categorical features
         multi_cat_transformer = preprocessor.transformers_[2][1]
@@ -175,8 +168,6 @@ def run_feature_engineering(
             categories = ordinal_encoder.categories_[0]  # First (and only) feature
             for idx, category in enumerate(categories):
                 region_mapping[category] = idx
-
-        preprocessor_data["region_mapping"] = region_mapping
 
         # Create reverse mapping for logging
         reverse_mapping = {v: k for k, v in region_mapping.items()}
@@ -194,7 +185,6 @@ def run_feature_engineering(
 
         if hasattr(onehot_encoder, "categories_"):
             region_categories = onehot_encoder.categories_[0]
-            preprocessor_data["region_categories"] = list(region_categories)
 
             logger.info(f"Multi-Categorical One-Hot Mappings:")
             logger.info(f"  Region categories: {list(region_categories)}")
@@ -202,16 +192,12 @@ def run_feature_engineering(
                 f"  Created columns: {[name for name in feature_names if 'region_' in name]}"
             )
 
-    # Add binary mappings to saved data
-    if hasattr(binary_encoder, "categories_"):
-        preprocessor_data["sex_mapping"] = sex_mapping
-        preprocessor_data["smoker_mapping"] = smoker_mapping
-
     logger.info(f"Final feature names: {feature_names}")
     logger.info("=" * 50)
 
-    joblib.dump(preprocessor_data, preprocessor_file)
-    logger.info(f"Saved complete preprocessor with mappings to {preprocessor_file}")
+    # Save preprocessor directly (no intermediate transformations)
+    joblib.dump(preprocessor, preprocessor_file)
+    logger.info(f"Saved preprocessor with mappings directly to {preprocessor_file}")
 
     # Save fully preprocessed data
     df_final.to_csv(output_file, index=False)
