@@ -12,16 +12,25 @@ MODEL_DIR = Path(__file__).resolve().parent.parent.parent / "models" / "trained"
 try:
     model = joblib.load(MODEL_DIR / "insurance_charges_model_xgbregressor.pkl")
     preprocessor = joblib.load(MODEL_DIR / "preprocessor_ordinal_clean.pkl")
+
 except Exception as e:
     print(f"Error loading model or preprocessor: {e}")
     model = None
     preprocessor = None
 
 def predict_insurance_charge(request: InsuranceChargePredictRequest) -> InsuranceChargePredictResponse:
+    """
+    Predict health insurance charges based on input features.
+    Args:
+        request (InsuranceChargePredictRequest): Input features for prediction.
+    Returns:
+
+        InsuranceChargePredictResponse: Predicted insurance charge.
+    """
     if model is None or preprocessor is None:
         raise RuntimeError("Model or preprocessor not loaded properly.")
-    
-    # Convert request to DataFrame
+
+    # Convert request to DataFrame (from json to dict to DataFrame)
     input_data = pd.DataFrame([request.model_dump()])
     
     # Preprocess the input data
