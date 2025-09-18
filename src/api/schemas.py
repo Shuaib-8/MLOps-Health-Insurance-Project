@@ -15,8 +15,8 @@ class InsuranceChargePredictRequest(BaseModel):
         description="Number of children/dependents covered by the insurance",
     )
     sex: str = Field(..., description="Gender of the individual (male/female)")
-    smoker: bool = Field(
-        ..., description="Whether the individual is a smoker or not (True/False)"
+    smoker: str = Field(
+        ..., description="Whether the individual is a smoker or not (yes/no)"
     )
     region: str = Field(
         ...,
@@ -27,4 +27,7 @@ class InsuranceChargePredictRequest(BaseModel):
 class InsuranceChargePredictResponse(BaseModel):
     predicted_charge: float = Field(
         ..., description="Predicted health insurance charge for the individual"
+    )
+    prediction_time: str = Field(
+        ..., description="ISO format timestamp when prediction was made"
     )
