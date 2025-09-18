@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+import uvicorn
+from api.inference import predict_insurance_charge
+from api.schemas import InsuranceChargePredictRequest, InsuranceChargePredictResponse
 
 # Initialize the FastAPI app with metadata
 app = FastAPI(
@@ -15,3 +18,29 @@ async def health_check():
     Health check endpoint to verify that the API is running.
     """
     return {"status": "ok", "message": "API is running"}
+
+# Import the prediction endpoint from the inference module
+@app.post("/predict", response_model=dict)
+async def predict(request: dict):
+    """
+    Endpoint to predict health insurance charges.
+    """
+    try:
+        # Parse the incoming request to the Pydantic model
+        request_data = InsuranceChargePredictRequest(**request)
+
+        # Get prediction
+        response = predict_insurance_charge(request_data)
+        
+        return {"predicted_charge": response.predicted_charge}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# Entry point function for package installation
+def main():
+    """Entry point for the API server when installed as package."""
+    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
+
+if __name__ == "__main__":
+    main()
