@@ -112,7 +112,7 @@ def main():
         model_name = model_cfg['best_model_name']
         
         # Save model locally first
-        save_path = f"{args.models_dir}/trained/{model_name}.pkl"
+        save_path = f"{args.models_dir}/trained/insurance_charges_model_{str(model_name).lower()}.pkl"
         joblib.dump(model, save_path)
         logger.info(f"Saved trained model to: {save_path}")
         
