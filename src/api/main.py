@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
-from api.inference import predict_insurance_charge
-from api.schemas import InsuranceChargePredictRequest, InsuranceChargePredictResponse
+from api.inference import predict_insurance_charge, batch_predict_insurance_charges
+from api.schemas import InsuranceChargePredictRequest, InsuranceChargePredictResponse, BatchInsuranceChargePredictRequest
 
 # Initialize the FastAPI app with metadata
 app = FastAPI(
@@ -31,8 +31,26 @@ async def predict(request: dict):
 
         # Get prediction
         response = predict_insurance_charge(request_data)
-        
-        return {"predicted_charge": response.predicted_charge}
+        return {"predicted_charge": response.predicted_charge,
+                "prediction_time": response.prediction_time}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# Batch prediction endpoint
+@app.post("/batch-predict", response_model=list)
+async def batch_predict_endpoint(requests: list[InsuranceChargePredictRequest]):
+    """
+    Endpoint to predict health insurance charges for multiple requests.
+    """
+    try:
+        # Wrap the list in BatchInsuranceChargePredictRequest
+        batch_request = BatchInsuranceChargePredictRequest(requests=requests)
+
+        # Get batch predictions
+        responses = batch_predict_insurance_charges(batch_request)
+        return [{"predicted_charge": resp.predicted_charge, "prediction_time": resp.prediction_time}
+                for resp in responses]
     except Exception as e:
         return {"error": str(e)}
 
