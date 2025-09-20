@@ -1,9 +1,14 @@
+from typing import List
 import joblib
 import pandas as pd
 from datetime import datetime
 from pathlib import Path
 
-from api.schemas import InsuranceChargePredictRequest, InsuranceChargePredictResponse
+from api.schemas import (
+    InsuranceChargePredictRequest, 
+    InsuranceChargePredictResponse, 
+    BatchInsuranceChargePredictRequest
+)
 
 # Mount the model directory
 MODEL_DIR = Path(__file__).resolve().parent.parent.parent / "models" / "trained"
@@ -46,3 +51,33 @@ def predict_insurance_charge(request: InsuranceChargePredictRequest) -> Insuranc
         predicted_charge=predicted_charge,
         prediction_time=datetime.now().isoformat()
     )
+
+def batch_predict_insurance_charges(batch_request: BatchInsuranceChargePredictRequest) -> List[InsuranceChargePredictResponse]:
+    """
+    Predict health insurance charges for a batch of requests.
+    Args:
+        batch_request (BatchInsuranceChargePredictRequest): Batch of input features for prediction.
+    Returns:
+        List[InsuranceChargePredictResponse]: List of predicted insurance charges.
+    """
+    if model is None or preprocessor is None:
+        raise RuntimeError("Model or preprocessor not loaded properly.")
+    
+    # Convert batch request to DataFrame
+    input_data = pd.DataFrame([req.model_dump() for req in batch_request.requests])
+
+    # Preprocess the input data
+    processed_data = preprocessor.transform(input_data)
+
+    # Make predictions
+    predicted_insurance_charges = model.predict(processed_data)
+
+    # Round the predictions to 2 decimal places and create response objects
+    prediction_time = datetime.now().isoformat()
+    return [
+        InsuranceChargePredictResponse(
+            predicted_charge=round(float(charge), 2),
+            prediction_time=prediction_time
+        )
+        for charge in predicted_insurance_charges
+    ]
