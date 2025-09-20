@@ -31,3 +31,8 @@ class InsuranceChargePredictResponse(BaseModel):
     prediction_time: str = Field(
         ..., description="ISO format timestamp when prediction was made"
     )
+
+class BatchInsuranceChargePredictRequest(BaseModel):
+    requests: List[InsuranceChargePredictRequest] = Field(
+        ..., description="List of insurance charge prediction requests"
+    )
