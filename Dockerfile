@@ -1,0 +1,56 @@
+# Optimized multi-stage Dockerfile for FastAPI deployment with uv
+FROM python:3.12.11-slim AS builder
+
+# Install uv for fast Python package management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Set working directory
+WORKDIR /app
+
+# Copy uv configuration files
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies with optimizations
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv venv /opt/venv && \
+    uv sync --frozen --no-dev --link-mode=copy
+
+# Copy source code and install package
+COPY src/ src/
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --python=/opt/venv/bin/python -e .
+
+# Production stage - minimal runtime image
+FROM python:3.12.11-slim
+
+# Install only essential runtime packages and clean up in same layer
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+
+# Set working directory
+WORKDIR /app
+
+# Copy source code
+COPY src/ src/
+
+# Copy models directory (required for inference)
+COPY models/ models/
+
+# Activate virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash app && \
+    chown -R app:app /app
+USER app
+
+# Expose FastAPI port
+EXPOSE 8000
+
+# Run FastAPI application
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,66 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+
+# Development and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Documentation and markdown (except required files)
+*.md
+!README.md
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+notebooks/
+
+# Data files (keep models but exclude data)
+data/
+
+# Cache directories
+.ruff_cache/
+.pytest_cache/
+.coverage
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Deployment and build artifacts
+deployment/
+streamlit_app/
+Dockerfile*
+.dockerignore
+
+# Environment files
+environment.yml
+setup_env.sh
+ENVIRONMENT_SETUP.md
+
+# Lock files (already copied explicitly)
+# uv.lock is copied explicitly in Dockerfile
+
+# Testing
+tests/
+*.log
