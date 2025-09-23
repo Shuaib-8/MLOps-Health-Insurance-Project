@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from api.inference import predict_insurance_charge, batch_predict_insurance_charges
 from api.schemas import InsuranceChargePredictRequest, InsuranceChargePredictResponse, BatchInsuranceChargePredictRequest
@@ -10,6 +11,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Health check endpoint
 @app.get("/health", response_model=dict)
