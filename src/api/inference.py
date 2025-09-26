@@ -49,7 +49,7 @@ def predict_insurance_charge(request: InsuranceChargePredictRequest) -> Insuranc
 
     return InsuranceChargePredictResponse(
         predicted_charge=predicted_charge,
-        prediction_time=datetime.now().isoformat()
+        prediction_time=datetime.now().strftime("%Y-%m-%d --- %H:%M:%S")
     )
 
 def batch_predict_insurance_charges(batch_request: BatchInsuranceChargePredictRequest) -> List[InsuranceChargePredictResponse]:
