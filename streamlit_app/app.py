@@ -11,10 +11,17 @@ st.set_page_config(
 
 # App title and description
 st.markdown('<h1 class="main-header">Health Insurance Charge Prediction</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">A simple MLOps demonstration project for real-time health insurance charge prediction</p>', unsafe_allow_html=True)
+st.markdown("""
+            <p style="font-size:18px; color:gray;">
+            This application predicts US health insurance Charges (annual) based on various factors. 
+            Inference is performed using a trained XGBoost model. 
+            </p>
+            """,
+            unsafe_allow_html=True
+)
 
 # Create two columns for layout
-col1, col2 = st.columns([1, 1])
+col1, col2 = st.columns(2, gap="large")
 
 # Initialize session state for prediction results
 if 'prediction_result' not in st.session_state:
@@ -22,11 +29,12 @@ if 'prediction_result' not in st.session_state:
 if 'prediction_error' not in st.session_state:
     st.session_state.prediction_error = None
 
+# Input form in the first (main) column
 with col1:
     st.subheader("Input Features")
 
     # BMI input
-    bmi = st.number_input(
+    bmi = st.slider(
         "BMI",
         min_value=15.96,
         max_value=53.13,
@@ -37,7 +45,7 @@ with col1:
     )
 
     # Age input
-    age = st.number_input(
+    age = st.slider(
         "Age",
         min_value=18,
         max_value=64,
@@ -54,35 +62,42 @@ with col1:
         help="Number of children/dependents covered by insurance"
     )
 
-    # Sex input
-    sex = st.selectbox(
-        "Sex",
-        options=["female", "male"],
+    sex_col, smoker_col, region_col = st.columns(3)
+
+    with sex_col:
+        # Sex input
+        sex = st.selectbox(
+            "Sex",
+            options=["female", "male"],
         index=0,
         help="Gender of the individual"
     )
 
-    # Smoker input
-    smoker = st.selectbox(
-        "Smoker",
-        options=["no", "yes"],
-        index=0,
-        help="Whether the individual is a smoker"
-    )
+    with smoker_col:
+        # Smoker input
+        smoker = st.selectbox(
+            "Smoker",
+            options=["no", "yes"],
+            index=0,
+            help="Whether the individual is a smoker"
+        )
 
-    # Region input
-    region = st.selectbox(
-        "Region",
-        options=["northeast", "northwest", "southeast", "southwest"],
-        index=0,
+    with region_col:
+        # Region input
+        region = st.selectbox(
+            "Region",
+            options=["northeast", "northwest", "southeast", "southwest"],
+            index=0,
         help="Region where the individual resides"
     )
 
     # Predict button
     predict_button = st.button("Predict Charges", type="primary")
 
+# Prediction results in the second column
 with col2:
-    st.subheader("Prediction Results")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('<h2>Prediction Result</h2>', unsafe_allow_html=True)
 
     # Handle prediction logic
     if predict_button:
