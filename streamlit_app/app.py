@@ -1,3 +1,7 @@
+import datetime
+import os
+from unittest import result 
+
 import streamlit as st
 import requests
 
@@ -115,20 +119,24 @@ with col2:
                 }
 
                 # Make API request
+                API_ENDPOINT = os.getenv("API_ENDPOINT", "http://localhost:8000")
+                predict_url = f"{API_ENDPOINT}/predict"
+
+                st.write(f"Sending request to API at: {predict_url}")  # Debug line
+
+
                 response = requests.post(
-                    "http://localhost:8000/predict",
+                    predict_url,
                     json=request_data,
                     timeout=10
                 )
+                response.raise_for_status()  # Raise an error for bad status codes
+                prediction = response.json()
 
                 if response.status_code == 200:
-                    result = response.json()
-                    if 'error' in result:
-                        st.session_state.prediction_error = result['error']
-                        st.session_state.prediction_result = None
-                    else:
-                        st.session_state.prediction_result = result
-                        st.session_state.prediction_error = None
+                    prediction = response.json()
+                    st.session_state.prediction_result = prediction
+                    st.session_state.prediction_error = None
                 else:
                     st.session_state.prediction_error = f"API request failed with status code: {response.status_code}"
                     st.session_state.prediction_result = None
@@ -139,27 +147,49 @@ with col2:
             except requests.exceptions.Timeout:
                 st.session_state.prediction_error = "Request timed out. Please try again."
                 st.session_state.prediction_result = None
-            except Exception as e:
-                st.session_state.prediction_error = f"An error occurred: {str(e)}"
-                st.session_state.prediction_result = None
+            except requests.exceptions.RequestException as e:
+                st.error(f"An error occurred connecting to the API: {e}")
+                st.warning("Using mock prediction for demonstration purposes. Please check your API connection.")
+                # Mock prediction for demonstration
+                mock_prediction = {
+                    "predicted_charge": 12345.67,
+                    "prediction_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+                st.session_state.prediction_result = mock_prediction
+                st.session_state.prediction_error = None    
+
 
     # Display results or placeholder
-    if st.session_state.prediction_error:
-        st.error(st.session_state.prediction_error)
-    elif st.session_state.prediction_result:
-        predicted_charge = st.session_state.prediction_result.get('predicted_charge', 0)
-        prediction_time = st.session_state.prediction_result.get('prediction_time', '')
+    if "prediction_result" in st.session_state and st.session_state.prediction_result is not None:
+        if st.session_state.prediction_error:
+            st.error(st.session_state.prediction_error)
+        else:
+            predicted_charge = st.session_state.prediction_result.get('predicted_charge', 0)
+            prediction_time = st.session_state.prediction_result.get('prediction_time', '')
 
-        st.markdown(f'''
-        <div class="prediction-result">
-            <div class="prediction-label">Predicted Annual Insurance Charge</div>
-            <div class="prediction-amount">${predicted_charge:,.2f}</div>
-            <div class="prediction-time">Prediction made at: {prediction_time}</div>
-        </div>
-        ''', unsafe_allow_html=True)
+            # Formatting the result display
+            predicted_charge = f"${predicted_charge:,.2f}"
+            prediction_time = f"Prediction made at (UTC Time zone): \n\n {prediction_time}"
+
+            # Display prediction charge and time
+            col3, col4 = st.columns(2)
+            with col3:
+                st.markdown(f"""
+                <div class="prediction-card">
+                    <div class="prediction-label">Predicted Annual Insurance Charge</div>
+                    <div class="prediction-amount">{predicted_charge}</div>
+                </div>
+                """, unsafe_allow_html=True)
+            with col4:
+                st.markdown(f"""
+                <div class="prediction-time">{prediction_time}</div>
+                """, unsafe_allow_html=True)
+    elif "prediction_result" in st.session_state and st.session_state.prediction_error:
+        st.error(st.session_state.prediction_error)
     else:
-        st.markdown('''
-        <div class="prediction-placeholder">
+        # Show placeholder text when no prediction has been made
+        st.markdown("""    
+        <div style="text-align: center; padding: 40px; color: #666; font-size: 16px;">
             Fill out the form and click "Predict Charges" to see the estimated insurance charge.
         </div>
-        ''', unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
