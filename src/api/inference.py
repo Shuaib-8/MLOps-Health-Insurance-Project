@@ -73,7 +73,7 @@ def batch_predict_insurance_charges(batch_request: BatchInsuranceChargePredictRe
     predicted_insurance_charges = model.predict(processed_data)
 
     # Round the predictions to 2 decimal places and create response objects
-    prediction_time = datetime.now().isoformat()
+    prediction_time = datetime.now().strftime("%Y-%m-%d --- %H:%M:%S")
     return [
         InsuranceChargePredictResponse(
             predicted_charge=round(float(charge), 2),
