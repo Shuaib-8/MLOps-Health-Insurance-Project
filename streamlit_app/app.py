@@ -1,5 +1,6 @@
 import datetime
 import os
+import socket
 from unittest import result 
 
 import streamlit as st
@@ -92,7 +93,7 @@ with col1:
             "Region",
             options=["northeast", "northwest", "southeast", "southwest"],
             index=0,
-        help="Region where the individual resides"
+        help="Region where the individual resides (in the US)"
     )
 
     # Predict button
@@ -100,7 +101,6 @@ with col1:
 
 # Prediction results in the second column
 with col2:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<h2>Prediction Result</h2>', unsafe_allow_html=True)
 
     # Handle prediction logic
@@ -167,29 +167,102 @@ with col2:
             predicted_charge = st.session_state.prediction_result.get('predicted_charge', 0)
             prediction_time = st.session_state.prediction_result.get('prediction_time', '')
 
-            # Formatting the result display
-            predicted_charge = f"${predicted_charge:,.2f}"
-            prediction_time = f"Prediction made at (UTC Time zone): \n\n {prediction_time}"
-
-            # Display prediction charge and time
-            col3, col4 = st.columns(2)
-            with col3:
-                st.markdown(f"""
-                <div class="prediction-card">
-                    <div class="prediction-label">Predicted Annual Insurance Charge</div>
-                    <div class="prediction-amount">{predicted_charge}</div>
+            # Display prediction results with improved styling
+            st.markdown(f"""
+            <div style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 30px;
+                border-radius: 15px;
+                color: white;
+                text-align: center;
+                margin: 20px 0;
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            ">
+                <h3 style="margin-bottom: 20px; font-size: 24px; font-weight: 600;">
+                    🏥 Predicted Annual Insurance Charge
+                </h3>
+                <div style="
+                    font-size: 48px;
+                    font-weight: bold;
+                    margin: 20px 0;
+                    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                ">
+                    ${predicted_charge:,.2f}
                 </div>
-                """, unsafe_allow_html=True)
-            with col4:
-                st.markdown(f"""
-                <div class="prediction-time">{prediction_time}</div>
-                """, unsafe_allow_html=True)
+                <div style="
+                    background: rgba(255,255,255,0.2);
+                    padding: 15px;
+                    border-radius: 10px;
+                    margin-top: 20px;
+                    backdrop-filter: blur(10px);
+                ">
+                    <p style="margin: 0; font-size: 16px; opacity: 0.9;">
+                        <strong>📅 Prediction made at (UTC):</strong><br>
+                        {prediction_time}
+                    </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
     elif "prediction_result" in st.session_state and st.session_state.prediction_error:
         st.error(st.session_state.prediction_error)
     else:
         # Show placeholder text when no prediction has been made
-        st.markdown("""    
-        <div style="text-align: center; padding: 40px; color: #666; font-size: 16px;">
-            Fill out the form and click "Predict Charges" to see the estimated insurance charge.
+        st.markdown("""
+        <div style="
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 60px 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px dashed #cbd5e0;
+            color: #4a5568;
+            box-shadow: 0 4px 20px 0 rgba(0,0,0,0.1);
+        ">
+            <div style="font-size: 48px; margin-bottom: 20px;">📊</div>
+            <h3 style="margin-bottom: 15px; color: #2d3748; font-weight: 600;">
+                Prediction Results
+            </h3>
+            <p style="
+                font-size: 18px;
+                line-height: 1.6;
+                margin: 0;
+                opacity: 0.8;
+                max-width: 400px;
+                margin: 0 auto;
+            ">
+                Fill out the form and click <strong>"Predict Charges"</strong> to see the estimated insurance charge.
+            </p>
         </div>
         """, unsafe_allow_html=True)
+
+# Fetch version, hostname, and IP address
+version = os.getenv("APP_VERSION", "1.0.0")  # Default version if not set in environment
+hostname = socket.gethostname()
+
+# Try to get IP address with fallback
+try:
+    ip_address = socket.gethostbyname(hostname)
+except socket.gaierror:
+    # Fallback to localhost IP if hostname resolution fails
+    try:
+        # Connect to a remote address to get local IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip_address = s.getsockname()[0]
+        s.close()
+    except Exception:
+        ip_address = "127.0.0.1"  # Ultimate fallback
+
+# Add footer
+st.markdown("<hr>", unsafe_allow_html=True)  # Add a horizontal line for separation
+st.markdown(
+    f"""
+    <div style="text-align: center; color: gray; margin-top: 20px;">
+        <p><strong>Built for MLOps end-to-end project</strong></p>
+        <p><strong>Version:</strong> {version}</p>
+        <p><strong>Hostname:</strong> {hostname}</p>
+        <p><strong>IP Address:</strong> {ip_address}</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
