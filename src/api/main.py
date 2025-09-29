@@ -22,6 +22,7 @@ app.add_middleware(
 
 # Health check endpoint
 @app.get("/health", response_model=dict)
+@app.head("/health", response_model=dict)
 async def health_check():
     """
     Health check endpoint to verify that the API is running.
