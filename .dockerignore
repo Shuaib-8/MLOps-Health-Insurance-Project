@@ -49,9 +49,9 @@ Thumbs.db
 
 # Deployment and build artifacts
 deployment/
-streamlit_app/
-Dockerfile*
-.dockerignore
+# streamlit_app/ - now needed for Streamlit Docker image
+# Dockerfile* - now needed for builds
+# .dockerignore - needed for context
 
 # Environment files
 environment.yml
