@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
+    image: shuaiba8/mlops-health-insurance-app:fastapi
     container_name: health-insurance-api
     ports:
       - "8000:8000"
@@ -24,6 +25,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.streamlit
+    image: shuaiba8/mlops-health-insurance-app:streamlit
     container_name: health-insurance-streamlit
     ports:
       - "8501:8501"
