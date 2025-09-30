@@ -38,6 +38,16 @@ if 'prediction_error' not in st.session_state:
 with col1:
     st.subheader("Input Features")
 
+        # Age input
+    age = st.slider(
+        "Age",
+        min_value=18,
+        max_value=64,
+        value=30,
+        step=1,
+        help="Age of the individual (18-64 years)"
+    )
+
     # BMI input
     bmi = st.slider(
         "BMI",
@@ -47,16 +57,6 @@ with col1:
         step=0.1,
         format="%.2f",
         help="Body Mass Index (15.96-53.13)"
-    )
-
-    # Age input
-    age = st.slider(
-        "Age",
-        min_value=18,
-        max_value=64,
-        value=30,
-        step=1,
-        help="Age of the individual (18-64 years)"
     )
 
     # Children input
