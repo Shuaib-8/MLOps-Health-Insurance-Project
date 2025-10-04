@@ -53,6 +53,21 @@ jobs:
             --artifacts-destination /mlflow/artifacts \
             --serve-artifacts
 
+      - name: Wait for MLflow to be ready
+        run: |
+          echo "Waiting for MLflow server to be ready..."
+          for i in {1..30}; do
+            if curl -f http://localhost:5555/health &>/dev/null; then
+              echo "MLflow server is ready!"
+              exit 0
+            fi
+            echo "Attempt $i: MLflow not ready yet, waiting..."
+            sleep 2
+          done
+          echo "MLflow server failed to start within 60 seconds"
+          docker logs mlflow-tracking-server
+          exit 1
+
       - name: Train the model
         run: |
           uv run python src/models/train_model.py \
