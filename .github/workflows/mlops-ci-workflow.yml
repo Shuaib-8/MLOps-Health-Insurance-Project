@@ -48,10 +48,11 @@ jobs:
         run: |
           docker pull ghcr.io/mlflow/mlflow:latest
           docker run -d -p 5555:5000 --name mlflow-tracking-server ghcr.io/mlflow/mlflow:latest \
+            sh -c "mkdir -p /mlflow/mlruns /mlflow/artifacts && \
             mlflow server --host 0.0.0.0 --port 5000 \
             --backend-store-uri sqlite:///mlflow/mlflow.db \
             --artifacts-destination /mlflow/artifacts \
-            --serve-artifacts
+            --serve-artifacts"
 
       - name: Wait for MLflow to be ready
         run: |
