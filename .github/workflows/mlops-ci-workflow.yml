@@ -38,8 +38,8 @@ jobs:
 
       - name: Run feature engineering (ordinal encoding featureset)
         run: |
-          python src/features/engineer.py \ 
+          uv run python src/features/engineer.py \
           --input data/interim/cleaned_health_insurance_us_v1.csv \
           --output data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
           --preprocessor models/trained/preprocessor_ordinal_clean.pkl \
-          --encoding ordinal  
+          --encoding ordinal
