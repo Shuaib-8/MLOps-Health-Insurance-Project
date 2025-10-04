@@ -61,3 +61,9 @@ jobs:
           --data data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
           --models-dir models/ \
           --mlflow-tracking-uri http://localhost:5555
+      
+      - name: Cleanup MLflow
+        run: |
+          docker stop mlflow-tracking-server
+          docker rm mlflow-tracking-server
+          docker rmi ghcr.io/mlflow/mlflow:latest
