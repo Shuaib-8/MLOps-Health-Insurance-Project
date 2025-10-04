@@ -53,10 +53,10 @@ jobs:
             --artifacts-destination /mlflow/artifacts \
             --serve-artifacts
 
-      - name: Train the model 
+      - name: Train the model
         run: |
-          uv run python src/models/train.py \
+          uv run python src/models/train_model.py \
           --config configs/model_config.yaml \
           --data data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
           --models-dir models/ \
-          --mlflow_tracking_uri http://localhost:5555 \
+          --mlflow-tracking-uri http://localhost:5555
