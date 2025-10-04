@@ -43,3 +43,19 @@ jobs:
           --output data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
           --preprocessor models/trained/preprocessor_ordinal_clean.pkl \
           --encoding ordinal
+
+      - name: Setup MLflow
+        run: |
+          docker pull ghcr.io/mlflow/mlflow:latest
+          docker run -d -p 5555:5000 --name mlflow-tracking-server ghcr.io/mlflow/mlflow:latest \
+          --backend-store-uri sqlite:///mlflow/mlflow.db \ 
+          --artifacts-destination /mlflow/artifacts \ 
+          --serve-artifacts
+
+      - name: Train the model 
+        run: |
+          uv run python src/models/train.py \
+          --config configs/model_config.yaml \
+          --data data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
+          --models-dir models/ \
+          --mlflow_tracking_uri http://localhost:5555 \
