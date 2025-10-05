@@ -1,15 +1,37 @@
 name: MLOps CI Workflow
 
 on:
+  workflow_dispatch:
+    inputs:
+      run_all:
+        description: 'Run all jobs'
+        required: false
+        default: 'true'
+      run_data_processing:
+        description: 'Run data processing job'
+        required: false
+        default: 'false'
+      run_model_training:
+        description: 'Run model training job'
+        required: false
+        default: 'false'
+      run_build_and_publish:
+        description: 'Run build and publish job'
+        required: false
+        default: 'false'
+  release:
+    types: [created]
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
+
 
 jobs:
-  e2e_mlops_ci_workflow:
+  data_processing:
+    if: |
+      github.event_name == 'release' ||
+      github.event.inputs.run_all == 'true' ||
+      github.event.inputs.run_data_processing == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +66,62 @@ jobs:
           --preprocessor models/trained/preprocessor_ordinal_clean.pkl \
           --encoding ordinal
 
+      - name: Upload processed data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: processed-data
+          path: data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv
+
+      - name: Upload preprocessor artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: preprocessor-ordinal
+          path: models/trained/preprocessor_ordinal_clean.pkl
+
+  model_training:
+    if: |
+      github.event_name == 'release' ||
+      github.event.inputs.run_all == 'true' ||
+      github.event.inputs.run_model_training == 'true'
+    runs-on: ubuntu-latest
+    needs: data_processing
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"  
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync --frozen --no-dev 
+
+      - name: Install package
+        run: |
+          uv pip install -e .
+
+      - name: Download processed data artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: processed-data
+          path: data/processed/
+
+      - name: Download preprocessor artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: preprocessor-ordinal
+          path: models/trained/
+
       - name: Setup MLflow
         run: |
           docker pull ghcr.io/mlflow/mlflow:latest
@@ -54,6 +132,12 @@ jobs:
             --artifacts-destination /mlflow/artifacts \
             --serve-artifacts"
 
+      - name: Wait for MLflow
+        run: |
+          for i in {1..10}; do
+            curl -f http://localhost:5555/health || sleep 5;
+          done
+
       - name: Train the model
         run: |
           uv run python src/models/train_model.py \
@@ -61,12 +145,41 @@ jobs:
           --data data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
           --models-dir models/ \
           --mlflow-tracking-uri http://localhost:5555
-      
-      - name: Cleanup MLflow
+
+      - name: Upload model artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: models/trained/
+
+      - name: Teardown MLflow
         run: |
           docker stop mlflow-tracking-server
           docker rm mlflow-tracking-server
-          docker rmi ghcr.io/mlflow/mlflow:latest
+
+  build_and_publish:
+    if: |
+      github.event_name == 'release' ||
+      github.event.inputs.run_all == 'true' ||
+      github.event.inputs.run_build_and_publish == 'true'
+    runs-on: ubuntu-latest
+    needs: model_training
+
+    steps:  
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download trained model artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: trained-model
+          path: models/trained/
+
+      - name: Download preprocessor artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: preprocessor-ordinal
+          path: models/trained/
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -78,9 +191,23 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: "."
-          push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/fastapi:${{ github.sha }}
-          file: "Dockerfile.api"
+        run: |
+          COMMIT_HASH=$(echo ${{ github.sha }} | cut -c1-7)
+          docker build -t docker.io/${{ vars.DOCKERHUB_USERNAME }}/mlops-health-insurance-app:$COMMIT_HASH -f Dockerfile.api .
+          docker run -d -p 8000:8000 --name test-api docker.io/${{ vars.DOCKERHUB_USERNAME }}/mlops-health-insurance-app:$COMMIT_HASH
+          for i in {1..10}; do
+            curl -f http://localhost:8000/health && break || sleep 5;
+          done
+          docker logs test-api
+
+      - name: Clean up test container
+        run: |
+          docker stop test-api
+          docker rm test-api
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          COMMIT_HASH=$(echo ${{ github.sha }} | cut -c1-7)
+          docker tag docker.io/${{ vars.DOCKERHUB_USERNAME }}/mlops-health-insurance-app:$COMMIT_HASH docker.io/${{ vars.DOCKERHUB_USERNAME }}/mlops-health-insurance-app:latest
+          docker push docker.io/${{ vars.DOCKERHUB_USERNAME }}/mlops-health-insurance-app:$COMMIT_HASH
+          docker push docker.io/${{ vars.DOCKERHUB_USERNAME }}/mlops-health-insurance-app:latest
