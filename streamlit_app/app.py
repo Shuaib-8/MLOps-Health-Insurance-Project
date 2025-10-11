@@ -119,7 +119,7 @@ with col2:
                 }
 
                 # Make API request
-                API_ENDPOINT = os.getenv("API_ENDPOINT", "http://localhost:8000")
+                API_ENDPOINT = os.getenv("API_ENDPOINT", "http://api:8000")
                 predict_url = f"{API_ENDPOINT}/predict"
 
                 st.write(f"Sending request to API at: {predict_url}")  # Debug line
@@ -236,7 +236,7 @@ with col2:
         """, unsafe_allow_html=True)
 
 # Fetch version, hostname, and IP address
-version = os.getenv("APP_VERSION", "1.0.0")  # Default version if not set in environment
+version = os.getenv("APP_VERSION", "2.0.0")  # Default version if not set in environment
 hostname = socket.gethostname()
 
 # Try to get IP address with fallback
