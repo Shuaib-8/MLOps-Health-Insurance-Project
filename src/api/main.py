@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from api.inference import predict_insurance_charge, batch_predict_insurance_charges
 from api.schemas import InsuranceChargePredictRequest, InsuranceChargePredictResponse, BatchInsuranceChargePredictRequest
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Initialize the FastAPI app with metadata
 app = FastAPI(
@@ -19,6 +20,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add Prometheus instrumentation
+Instrumentator().instrument(app).expose(app)
 
 # Health check endpoint
 @app.get("/health", response_model=dict)
