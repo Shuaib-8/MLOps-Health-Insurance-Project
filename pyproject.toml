@@ -10,6 +10,7 @@ dependencies = [
     "matplotlib>=3.5,<=3.10",
     "mlflow>=3.3.1",
     "pandas>=2.3.2",
+    "prometheus-fastapi-instrumentator==6.1.0",
     "scikit-learn>=1.7.2",
     "scikit-optimize>=0.10.2",
     "seaborn>=0.13.2",
