@@ -10,7 +10,7 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 - `uv` is optional but recommended for running the apps locally
 - Docker & Docker Compose is optional for containerization and specific deployment scenarios like mlflow server
 - Kubernetes (kubectl) and KIND is optional for orchestration and local cluster setup
-
+- Helm is optional but recommended for managing Kubernetes applications concerning continous monitoring (Prometheus & Grafana)
 
 ### App Access
 
