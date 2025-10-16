@@ -4,6 +4,8 @@ import uvicorn
 from api.inference import predict_insurance_charge, batch_predict_insurance_charges
 from api.schemas import InsuranceChargePredictRequest, InsuranceChargePredictResponse, BatchInsuranceChargePredictRequest
 from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import start_http_server
+import threading
 
 # Initialize the FastAPI app with metadata
 app = FastAPI(
@@ -23,6 +25,12 @@ app.add_middleware(
 
 # Add Prometheus instrumentation
 Instrumentator().instrument(app).expose(app)
+
+# Start Prometheus metrics server
+def start_prometheus_server():
+    start_http_server(9100)
+
+threading.Thread(target=start_prometheus_server, daemon=True).start()
 
 # Health check endpoint
 @app.get("/health", response_model=dict)
