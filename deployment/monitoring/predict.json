@@ -1,0 +1,8 @@
+{
+    "age": 30,
+    "sex": "male",
+    "bmi": 25.0,
+    "children": 2,
+    "smoker": "no",
+    "region": "northeast"
+}
