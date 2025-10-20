@@ -21,6 +21,9 @@ resources:
   - fastapi-model-deploy.yaml
   - fastapi-model-svc.yaml
 
+  # KEDA Autoscaling
+  - fastapi-scaledobject.yaml
+
   # Streamlit Frontend
   - streamlit-deploy.yaml
   - streamlit-svc.yaml
