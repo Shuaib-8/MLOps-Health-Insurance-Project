@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
       - image: shuaiba8/streamlit:latest-v2
+        imagePullPolicy: Always
         name: streamlit
         ports:
         - containerPort: 8501
