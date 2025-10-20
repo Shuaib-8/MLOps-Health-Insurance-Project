@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 # App title and description
-st.markdown('<h1 class="main-header">Health Insurance Charge Prediction</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">Health Insurance Charge Prediction - V2</h1>', unsafe_allow_html=True)
 st.markdown("""
             <p style="font-size:18px; color:gray;">
             This application predicts US health insurance Charges (annual) based on various factors. 
