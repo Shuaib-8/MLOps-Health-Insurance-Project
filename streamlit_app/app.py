@@ -8,7 +8,7 @@ import requests
 
 # Page configuration
 st.set_page_config(
-    page_title="Health Insurance Charge Prediction",
+    page_title="Health Insurance Charge Prediction - V2",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="collapsed",
