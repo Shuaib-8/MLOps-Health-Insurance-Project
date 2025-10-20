@@ -1,0 +1,47 @@
+# Kustomize configuration for MLOps Health Insurance Project
+# This base configuration manages core application deployments and services
+#
+# Usage:
+#   kubectl apply -k deployment/kubernetes/
+#   kustomize build deployment/kubernetes/ | kubectl apply -f -
+
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Metadata for this kustomization
+metadata:
+  name: health-insurance-mlops
+  annotations:
+    description: "MLOps Health Insurance Prediction Application"
+
+# Base resources - core deployments and services
+resources:
+  # FastAPI Model Service
+  - fastapi-model-deploy.yaml
+  - fastapi-model-svc.yaml
+
+  # Streamlit Frontend
+  - streamlit-deploy.yaml
+  - streamlit-svc.yaml
+
+# Common labels applied to all resources
+# Note: Using 'labels' field (recommended) instead of deprecated 'commonLabels'
+labels:
+  - pairs:
+      app.kubernetes.io/name: health-insurance-mlops
+      app.kubernetes.io/version: "v1.0"
+      app.kubernetes.io/managed-by: kustomize
+      environment: production
+
+# Common annotations applied to all resources
+commonAnnotations:
+  project: "mlops-health-insurance"
+  contact: "shuaiba8"
+
+# Images configuration - allows easy image tag updates
+images:
+  - name: shuaiba8/fastapi
+    newTag: latest
+  - name: shuaiba8/streamlit
+    newTag: latest-v2
