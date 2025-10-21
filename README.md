@@ -2,6 +2,8 @@
 
 A Machine Learning Operations (MLOps) project for predicting health insurances charges. Context is covering the 4 US regions.
 
+![Health Insurance Frontend](assets/streamlit-frontend-ml-app.png)
+
 ## Setup & Installation
 
 **Prerequisites:**
