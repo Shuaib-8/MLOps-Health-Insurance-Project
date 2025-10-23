@@ -16,6 +16,7 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 - Docker & Docker Compose is optional for containerization and specific deployment scenarios like mlflow server
 - Kubernetes is optional for container orchestration, followed with KIND for local cluster setup to run the application in a Kubernetes environment
     - Helm is optional but recommended for managing Kubernetes applications concerning continous monitoring (Prometheus & Grafana)
+    - ArgoCD is optional for GitOps-based continuous deployment in Kubernetes environments
 
 ### App Access
 
