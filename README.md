@@ -9,7 +9,7 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 
 ## Setup & Installation
 
-<details><summary><h3>Directory structure</h3></summary>
+<details open><summary><h3>Directory structure</h3></summary>
 
 ```
 .
@@ -77,7 +77,6 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 ```
 </details>
 
-<br></br>
 **Prerequisites:**
 
 - Python 3.12 or higher
