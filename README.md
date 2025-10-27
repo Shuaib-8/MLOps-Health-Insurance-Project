@@ -1,6 +1,6 @@
 # MLOps Health Insurance Project
 
-A Machine Learning Operations (MLOps) project for predicting health insurances charges. The overall context of the data is covering the 4 US regions. This project demonstrates the end-to-end workflow of building, deploying, and monitoring a machine learning model using modern MLOps practices. It includes data preprocessing, model training, model deployment, and monitoring using tools like MLflow (experiment tracking), FastAPI (API development), Streamlit (frontend UI), Prometheus, and Grafana (monitoring). There are two main components in this project:
+A Machine Learning Operations (MLOps) project for predicting health insurances charges. The overall context of the data is covering the 4 US regions. This project demonstrates the end-to-end workflow of building, deploying, and monitoring a machine learning model using modern MLOps practices. It includes data preprocessing, model training, model deployment, experiment tracking using tools like MLflow, FastAPI (API development), Streamlit (frontend UI), Prometheus and Grafana (monitoring). There are two main components in this project:
 
 1. **Backend API**: A FastAPI application that serves the machine learning model for predictions.
 2. **Frontend UI**: A Streamlit application that provides a user-friendly interface for interacting with the model.
