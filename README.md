@@ -9,7 +9,7 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 
 ## Setup & Installation
 
-### Directory structure
+<details><summary><h3>Directory structure</h3></summary>
 
 ```
 .
@@ -75,7 +75,9 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 │   └── app.py
 └── uv.lock                                # Dependency lock file
 ```
+</details>
 
+<br></br>
 **Prerequisites:**
 
 - Python 3.12 or higher
