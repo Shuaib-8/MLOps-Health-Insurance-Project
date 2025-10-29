@@ -88,6 +88,22 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 
 ### App Access
 
+#### Local python environment setup
+
+Install python project dependencies in a virtual environment in the following way:
+
+```bash
+$ python -m venv .venv && source .venv/bin/activate
+$ pip install -e . 
+```
+
+You can use uv in the following way to install dependencies in a virtual environment - if you haven't installed uv already, you can visit the docs [here](https://docs.astral.sh/uv/getting-started/installation/). Otherwise create your virtual environment in uv like so 
+
+```bash
+$ uv venv && source .venv/bin/activate
+$ pip install -e . 
+```
+
 ### How to use 
 
 ### Testing 
