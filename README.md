@@ -101,10 +101,20 @@ You can use uv in the following way to install dependencies in a virtual environ
 
 ```bash
 $ uv venv && source .venv/bin/activate
-$ pip install -e . 
+$ uv sync
+$ uv pip install -e . 
 ```
 
-### How to use 
+You should then be able to run both the FastAPI backend and Streamlit frontend applications locally by activating the virtual environment and running the respective commands like so: 
+
+```bash
+# To run FastAPI backend and streamlit frontend together
+$ fastapi run src/api/main.py 
+# Run in separate terminals if needed
+$ streamlit run streamlit_app/app.py
+```
+
+### How to use
 
 ### Testing 
 
