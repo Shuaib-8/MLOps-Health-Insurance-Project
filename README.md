@@ -114,6 +114,16 @@ $ fastapi run src/api/main.py
 $ streamlit run streamlit_app/app.py
 ```
 
+Streamlit ToDo will need to think about changing api redirect on streamlit app to point to localhost:8000 for local runs
+
+Test the api `/predict` endpoint using curl or Postman:
+
+```bash
+$ curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d @deployment/monitoring/predict.json
+$ # Sample response - time in UTC  
+{"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
+```
+
 ### How to use
 
 ### Testing 
