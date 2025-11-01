@@ -124,9 +124,12 @@ with col2:
 
                 # Make API request
                 API_ENDPOINT = os.getenv("API_ENDPOINT", "http://api:8000")
+                # Display endpoint for user-facing URLs (falls back to actual endpoint if not set)
+                API_ENDPOINT_DISPLAY = os.getenv("API_ENDPOINT_DISPLAY", API_ENDPOINT)
                 predict_url = f"{API_ENDPOINT}/predict"
+                display_url = f"{API_ENDPOINT_DISPLAY}/predict"
 
-                st.write(f"Sending request to API at: {predict_url}")  # Debug line
+                st.write(f"Sending request to API at: {display_url}")  # Shows user-accessible URL
 
 
                 response = requests.post(
