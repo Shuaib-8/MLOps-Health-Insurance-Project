@@ -94,27 +94,43 @@ Install python project dependencies in a virtual environment in the following wa
 
 ```bash
 $ python -m venv .venv && source .venv/bin/activate
-$ pip install -e . 
+$ pip install -e .
 ```
 
-You can use uv in the following way to install dependencies in a virtual environment - if you haven't installed uv already, you can visit the docs [here](https://docs.astral.sh/uv/getting-started/installation/). Otherwise create your virtual environment in uv like so 
+You can use uv in the following way to install dependencies in a virtual environment - if you haven't installed uv already, you can visit the docs [here](https://docs.astral.sh/uv/getting-started/installation/). Otherwise create your virtual environment in uv like so
 
 ```bash
 $ uv venv && source .venv/bin/activate
 $ uv sync
-$ uv pip install -e . 
+$ uv pip install -e .
 ```
 
-You should then be able to run both the FastAPI backend and Streamlit frontend applications locally by activating the virtual environment and running the respective commands like so: 
+**Environment Variables Configuration**
+
+For local development, you need to configure environment variables to connect the Streamlit frontend to the FastAPI backend:
 
 ```bash
-# To run FastAPI backend and streamlit frontend together
-$ fastapi run src/api/main.py 
-# Run in separate terminals if needed
-$ streamlit run streamlit_app/app.py
+# Create your local .env file from the example template
+$ cp .env.example .env
 ```
 
-Streamlit ToDo will need to think about changing api redirect on streamlit app to point to localhost:8000 for local runs
+The `.env` file configures:
+- `API_ENDPOINT=http://localhost:8000` - Points Streamlit to your local FastAPI server
+- `APP_VERSION=2.0.0` - Application version displayed in the UI
+
+**Note**: The `.env` file is for local development only. When running with Docker Compose or Kubernetes, environment variables are configured in `docker-compose.yml` or Kubernetes manifests respectively (see below for further details).
+
+**Running the Applications**
+
+You should then be able to run both the FastAPI backend and Streamlit frontend applications locally by activating the virtual environment and running the respective commands like so:
+
+```bash
+# Run FastAPI backend (in first terminal)
+$ fastapi run src/api/main.py
+
+# Run Streamlit frontend (in second terminal)
+$ streamlit run streamlit_app/app.py
+```
 
 Test the api `/predict` endpoint using curl or Postman:
 
