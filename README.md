@@ -81,7 +81,7 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 
 - Python 3.12 or higher
 - `uv` is recommended for running the app(s) locally
-- Docker & Docker Compose is optional for containerization and specific deployment scenarios like mlflow server
+- Docker & Docker Compose is the recommended approach for containerization and specific deployment scenarios like mlflow server - see below for details
 - Kubernetes is optional for container orchestration, followed with KIND for local cluster setup to run the application in a Kubernetes environment
     - Helm is optional but recommended for managing Kubernetes applications concerning continous monitoring (Prometheus & Grafana)
     - ArgoCD is optional for GitOps-based continuous deployment in Kubernetes environments
@@ -130,6 +130,23 @@ $ fastapi run src/api/main.py
 
 # Run Streamlit frontend (in second terminal)
 $ streamlit run streamlit_app/app.py
+```
+
+Test the api `/predict` endpoint using curl or Postman:
+
+```bash
+$ curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d @deployment/monitoring/predict.json
+$ # Sample response - time in UTC  
+{"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
+```
+
+#### Docker & Docker Compose (Recommended)
+
+You can also run both applications using Docker Compose. This method is recommended as it simplifies the setup process by containerizing and simultaneously running both the FastAPI backend and Streamlit frontend.
+
+```bash
+# Build and run both FastAPI and Streamlit apps using Docker Compose
+$ docker-compose up --build
 ```
 
 Test the api `/predict` endpoint using curl or Postman:
