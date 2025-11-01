@@ -1,10 +1,14 @@
 import datetime
 import os
 import socket
-from unittest import result 
 
+from dotenv import load_dotenv
 import streamlit as st
 import requests
+
+# Load environment variables from .env file (for local development)
+# This will not override existing environment variables (e.g., from Docker/K8s)
+load_dotenv()
 
 # Page configuration
 st.set_page_config(
