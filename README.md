@@ -157,6 +157,10 @@ $ # Sample response - time in UTC
 {"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
 ```
 
+#### Kubernetes Deployment (Optional)
+
+You can deploy the applications to a Kubernetes cluster. For local testing, you can use KIND to create a local Kubernetes cluster. Although advanced and optional, this method is useful for simulating a production-like environment. 
+
 ### How to use
 
 ### Testing 
