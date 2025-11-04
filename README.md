@@ -166,3 +166,6 @@ You can deploy the applications to a Kubernetes cluster. For local testing, you 
 ### Testing 
 
 ### References
+
+The following resources were instrumental in the development of this project:
+
