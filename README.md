@@ -140,6 +140,12 @@ $ # Sample response - time in UTC
 {"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
 ```
 
+Although optional the preprocessor and model files are already included in the repository. For validation purposes, you can generate the feature engineered dataset and applied transformations by running feature engineering pipeline:
+
+```bash
+$ python src/features/engineer.py --input data/interim/cleaned_health_insurance_us_v1.csv --output data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv --preprocessor models/trained/preprocessor_ordinal_clean.pkl --encoding ordinal
+```
+
 #### Docker & Docker Compose (Recommended)
 
 You can also run both applications using Docker Compose. This method is recommended as it simplifies the setup process by containerizing and simultaneously running both the FastAPI backend and Streamlit frontend.
