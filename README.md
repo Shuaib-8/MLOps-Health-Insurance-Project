@@ -163,6 +163,16 @@ $ # Sample response - time in UTC
 {"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
 ```
 
+Although optional the preprocessor and model files are already included in the repository. For validation purposes, you can generate the feature engineered dataset and applied transformations by running feature engineering pipeline while inside the docker container:
+
+```bash
+# Access the running FastAPI container
+$ docker exec -it <fastapi_container_id> /bin/bash
+# Run feature engineering script inside the container
+$ python src/features/engineer.py --input data/interim/cleaned_health_insurance_us_v1.csv --output data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv --preprocessor models/trained/preprocessor_ordinal_clean.pkl --encoding ordinal
+```
+
+
 #### Kubernetes Deployment (Optional)
 
 You can deploy the applications to a Kubernetes cluster. For local testing, you can use KIND to create a local Kubernetes cluster. Although advanced and optional, this method is useful for simulating a production-like environment. 
