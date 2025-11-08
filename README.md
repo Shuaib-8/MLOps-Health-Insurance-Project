@@ -151,8 +151,8 @@ $ python src/features/engineer.py --input data/interim/cleaned_health_insurance_
 You can also run both applications using Docker Compose. This method is recommended as it simplifies the setup process by containerizing and simultaneously running both the FastAPI backend and Streamlit frontend.
 
 ```bash
-# Build and run both FastAPI and Streamlit apps using Docker Compose
-$ docker-compose up --build
+# Build and run both FastAPI and Streamlit apps using Docker Compose in the background
+$ docker compose -f docker-compose.yml up --build -d
 ```
 
 Test the api `/predict` endpoint using curl or Postman:
@@ -163,15 +163,44 @@ $ # Sample response - time in UTC
 {"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
 ```
 
-Although optional the preprocessor and model files are already included in the repository. For validation purposes, you can generate the feature engineered dataset and applied transformations by running feature engineering pipeline while inside the docker container:
+Open your browser and navigate to `http://localhost:8501` to access the Streamlit frontend application.
 
 ```bash
-# Access the running FastAPI container
-$ docker exec -it <fastapi_container_id> /bin/bash
-# Run feature engineering script inside the container
-$ python src/features/engineer.py --input data/interim/cleaned_health_insurance_us_v1.csv --output data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv --preprocessor models/trained/preprocessor_ordinal_clean.pkl --encoding ordinal
+# stop both containers
+$ docker compose -f docker-compose.yml down
 ```
 
+**Running Feature Engineering and Experiment Tracking with MLflow Tracking:** 
+
+Although optional the preprocessor and model files are already included in the repository. For validation purposes, you can generate the feature engineered dataset, applied transformations, and tracked experiments by running feature engineering pipeline and model training with MLflow tracking server using Docker Compose:
+
+```bash
+# 1. Start MLflow server in background
+$ docker compose -f deployment/mlflow/mlflow-docker-compose.yaml up -d
+
+# 2. Verify MLflow is running (should see "mlflow-tracking-server")
+$ docker ps
+
+# 3. Run feature engineering from your local environment
+$ python src/features/engineer.py \
+  --input data/interim/cleaned_health_insurance_us_v1.csv \
+  --output data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
+  --preprocessor models/trained/preprocessor_ordinal_clean.pkl \
+  --encoding ordinal
+
+# 4. Train model and register model experiment with MLflow tracking from your local environment
+$ python src/models/train_model.py \
+  --config configs/model_config.yaml \
+  --data data/processed/clean_feature_process_ordinal_health_insurance_us_v1.csv \
+  --models-dir models/ \
+  --mlflow-tracking-uri http://localhost:5555
+
+# 5. View experiments in MLflow UI
+# Open http://localhost:5555 in your browser
+
+# 6. Stop MLflow when done
+$ docker compose -f deployment/mlflow/mlflow-docker-compose.yaml down
+```
 
 #### Kubernetes Deployment (Optional)
 
