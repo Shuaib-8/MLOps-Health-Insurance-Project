@@ -152,7 +152,7 @@ $ python src/features/engineer.py \
 
 #### Docker & Docker Compose (Recommended)
 
-You can also run both applications using Docker Compose. This method is recommended as it simplifies the setup process by containerizing and simultaneously running both the FastAPI backend and Streamlit frontend.
+You can also run both applications using Docker Compose. This method is recommended as it simplifies the setup process by containerizing and simultaneously running both the FastAPI backend and Streamlit frontend. Instructions for install docker and docker compose can be found [here](https://docs.docker.com/get-docker/) and [here](https://docs.docker.com/compose/install/).
 
 ```bash
 # Build and run both FastAPI and Streamlit apps using Docker Compose in the background
