@@ -208,7 +208,50 @@ $ docker compose -f deployment/mlflow/mlflow-docker-compose.yaml down
 
 #### Kubernetes Deployment (Optional)
 
-You can deploy the applications to a Kubernetes cluster. For local testing, you can use KIND to create a local Kubernetes cluster. Although advanced and optional, this method is useful for simulating a production-like environment. 
+You can deploy the applications to a Kubernetes cluster. For local testing, you can use KIND to create a local Kubernetes cluster. Although advanced and optional, this method is useful for simulating a production-like environment.
+
+**Prerequisites:**
+
+Before starting, ensure you have the following tools installed:
+
+- **Docker**: For running containers ([Installation Guide](https://docs.docker.com/get-docker/))
+- **KIND** (Kubernetes in Docker): For local Kubernetes cluster ([Installation Guide](https://kind.sigs.k8s.io/docs/user/quick-start/#installation))
+- **kubectl**: Kubernetes command-line tool ([Installation Guide](https://kubernetes.io/docs/tasks/tools/))
+- **Kustomize**: For deploying Kubernetes manifests - built into kubectl 1.14+, or install standalone ([Installation Guide](https://kubectl.docs.kubernetes.io/installation/kustomize/))
+- **Helm** (Optional): For installing monitoring tools ([Installation Guide](https://helm.sh/docs/intro/install/))
+
+**Step 1: Create KIND Cluster**
+
+Create a local 3-node Kubernetes cluster (1 control plane, 2 workers) using the provided configuration:
+
+```bash
+# Create cluster from configuration file
+$ kind create cluster --name health-insurance-mlops --config deployment/kubernetes/kind-three-node-cluster.yaml
+
+# Verify cluster was created
+$ kind get clusters
+# Expected output: health-insurance-mlops
+
+# Check Docker containers are running
+$ docker ps --filter "name=health-insurance-mlops"
+# Expected output: 3 containers (1 control-plane, 2 worker nodes)
+
+# Verify kubectl context is set correctly
+$ kubectl config current-context
+# Expected output: kind-health-insurance-mlops
+
+# If context is not set, switch to it
+$ kubectl config use-context kind-health-insurance-mlops
+
+# Verify cluster is accessible
+$ kubectl cluster-info --context kind-health-insurance-mlops
+# Expected output: Kubernetes control plane is running at https://127.0.0.1:XXXXX
+
+# Check all nodes are ready
+$ kubectl get nodes
+# Expected output: 3 nodes (1 control-plane, 2 worker) with STATUS=Ready
+```
+
 
 ### How to use
 
