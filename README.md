@@ -252,6 +252,24 @@ $ kubectl get nodes
 # Expected output: 3 nodes (1 control-plane, 2 worker) with STATUS=Ready
 ```
 
+**Step 2: Deploy Application with Kustomize**
+
+Deploy the FastAPI backend and Streamlit frontend using Kustomize:
+
+```bash
+# Deploy all resources (deployments, services, autoscaling)
+$ kubectl apply -k deployment/kubernetes/
+
+# Verify deployments are running
+$ kubectl get deployments
+
+# Verify services are created
+$ kubectl get services
+
+# Check pod status (wait for all pods to be Running)
+$ kubectl get pods
+```
+
 
 ### How to use
 
