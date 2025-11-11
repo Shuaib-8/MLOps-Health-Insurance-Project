@@ -270,6 +270,26 @@ $ kubectl get services
 $ kubectl get pods
 ```
 
+**Step 3: Access the Applications**
+
+Once all pods are running, access the applications:
+
+- **Streamlit UI**: http://localhost:30000
+- **FastAPI API**: http://localhost:30100
+- **FastAPI Documentation**: http://localhost:30100/docs
+- **Health Check**: http://localhost:30100/health
+
+Test the API with a prediction request:
+
+```bash
+$ curl -X POST "http://localhost:30100/predict" \
+  -H "Content-Type: application/json" \
+  -d @deployment/monitoring/predict.json
+
+# Expected response:
+{"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
+```
+
 
 ### How to use
 
