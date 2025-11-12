@@ -290,6 +290,24 @@ $ curl -X POST "http://localhost:30100/predict" \
 {"predicted_charge":7620.43,"prediction_time":"2025-10-31 --- 21:38:17"}
 ```
 
+**Step 4: Install KEDA for Horizontal Autoscaling (Optional)**
+
+KEDA enables metric-based autoscaling for the FastAPI deployment. The application will scale from 1 to 5 replicas based on API latency and request rate:
+
+```bash
+# Add KEDA Helm repository
+$ helm repo add kedacore https://kedacore.github.io/charts
+$ helm repo update
+
+# Install KEDA operator
+$ helm install keda kedacore/keda --namespace keda --create-namespace
+
+# Verify KEDA is running
+$ kubectl get pods -n keda
+
+# The FastAPI ScaledObject will automatically activate once Prometheus is installed
+```
+
 
 ### How to use
 
