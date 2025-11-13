@@ -111,7 +111,7 @@ For local development, you need to configure environment variables to connect th
 
 ```bash
 # Create your local .env file from the example template
-$ cp .env.example .env
+$ cp .env_example .env
 ```
 
 The `.env` file configures:
