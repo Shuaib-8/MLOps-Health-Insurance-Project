@@ -308,6 +308,43 @@ $ kubectl get pods -n keda
 # The FastAPI ScaledObject will automatically activate once Prometheus is installed
 ```
 
+**Step 5: Install Prometheus & Grafana for Monitoring (Optional)**
+
+Install the kube-prometheus-stack to monitor your application metrics:
+
+```bash
+# Add Prometheus community Helm repository
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+$ helm repo update
+
+# Install Prometheus stack in monitoring namespace
+$ helm install prom prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace \
+  --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+
+# Verify Prometheus stack is running
+$ kubectl get pods -n monitoring
+
+# Deploy ServiceMonitor to scrape FastAPI metrics
+$ kubectl apply -f deployment/monitoring/servicemonitor.yaml
+
+# Access Prometheus UI (in a new terminal)
+$ kubectl port-forward -n monitoring svc/prom-kube-prometheus-stack-prometheus 9090:9090
+# Open http://localhost:9090
+
+# Access Grafana UI (in a new terminal)
+$ kubectl port-forward -n monitoring svc/prom-grafana 3000:80
+# Open http://localhost:3000
+# Default credentials: admin / prom-operator
+```
+
+**What's being monitored:**
+- FastAPI metrics exposed at `/metrics` endpoint (scraped every 15s)
+- KEDA autoscaling triggers based on:
+  - API latency (P95 threshold: 0.5 seconds)
+  - Request rate (threshold: 1000 requests/minute)
+
 
 ### How to use
 
