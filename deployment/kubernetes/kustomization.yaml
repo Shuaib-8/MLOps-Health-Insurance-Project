@@ -1,5 +1,6 @@
 # Kustomize configuration for MLOps Health Insurance Project
 # This base configuration manages core application deployments and services
+# Note: Autoscaling (KEDA ScaledObject) is deployed separately after KEDA installation
 #
 # Usage:
 #   kubectl apply -k deployment/kubernetes/
@@ -20,9 +21,6 @@ resources:
   # FastAPI Model Service
   - fastapi-model-deploy.yaml
   - fastapi-model-svc.yaml
-
-  # KEDA Autoscaling
-  - fastapi-scaledobject.yaml
 
   # Streamlit Frontend
   - streamlit-deploy.yaml

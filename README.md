@@ -257,27 +257,23 @@ $ kubectl get nodes
 Deploy the FastAPI backend and Streamlit frontend using Kustomize:
 
 ```bash
-# Deploy all resources (deployments, services, autoscaling)
+# Deploy all resources (deployments, services)
 $ kubectl apply -k deployment/kubernetes/
 
-# Verify deployments are running
-$ kubectl get deployments
-
-# Verify services are created
-$ kubectl get services
-
-# Check pod status (wait for all pods to be Running)
-$ kubectl get pods
+# Verify deployment setup is successful
+$ kubectl get all
+# Expected output: Pods, Services, Deployments for FastAPI and Streamlit should be running  
 ```
+
+**Note:** Autoscaling (KEDA ScaledObject) is not deployed in this step. It will be configured in Step 4 after KEDA is installed.
 
 **Step 3: Access the Applications**
 
 Once all pods are running, access the applications:
 
 - **Streamlit UI**: http://localhost:30000
-- **FastAPI API**: http://localhost:30100
+- **FastAPI API Health Check**: http://localhost:30100/health
 - **FastAPI Documentation**: http://localhost:30100/docs
-- **Health Check**: http://localhost:30100/health
 
 Test the API with a prediction request:
 
