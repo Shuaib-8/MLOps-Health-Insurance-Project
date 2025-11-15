@@ -292,8 +292,7 @@ KEDA enables metric-based autoscaling for the FastAPI deployment. The applicatio
 
 ```bash
 # Add KEDA Helm repository
-$ helm repo add kedacore https://kedacore.github.io/charts
-$ helm repo update
+$ helm repo add kedacore https://kedacore.github.io/charts && helm repo update
 
 # Install KEDA operator
 $ helm install keda kedacore/keda --namespace keda --create-namespace
@@ -301,39 +300,80 @@ $ helm install keda kedacore/keda --namespace keda --create-namespace
 # Verify KEDA is running
 $ kubectl get pods -n keda
 
-# The FastAPI ScaledObject will automatically activate once Prometheus is installed
+# Deploy the ScaledObject for FastAPI autoscaling
+$ kubectl apply -f deployment/monitoring/fastapi-scaledobject.yaml
+
+# Verify ScaledObject is created
+$ kubectl get scaledobject
 ```
 
 **Step 5: Install Prometheus & Grafana for Monitoring (Optional)**
 
-Install the kube-prometheus-stack to monitor your application metrics:
+Install the kube-prometheus-stack to monitor your application metrics using NodePort services:
 
 ```bash
 # Add Prometheus community Helm repository
-$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-$ helm repo update
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update
 
-# Install Prometheus stack in monitoring namespace
-$ helm install prom prometheus-community/kube-prometheus-stack \
-  --namespace monitoring \
+# Install Prometheus stack with NodePort services in monitoring namespace
+$ helm upgrade --install prom \
+  -n monitoring \
   --create-namespace \
-  --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+  prometheus-community/kube-prometheus-stack \
+  --set grafana.service.type=NodePort \
+  --set grafana.service.nodePort=30200 \
+  --set prometheus.service.type=NodePort \
+  --set prometheus.service.nodePort=30300 \
+  --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+  --set grafana.adminPassword=prom-operator
 
-# Verify Prometheus stack is running
+# Verify Helm release is deployed
+$ helm list -A
+
+# Verify all monitoring resources are running
+$ kubectl get all -n monitoring
+
+# Verify Prometheus stack pods are running
 $ kubectl get pods -n monitoring
 
 # Deploy ServiceMonitor to scrape FastAPI metrics
 $ kubectl apply -f deployment/monitoring/servicemonitor.yaml
-
-# Access Prometheus UI (in a new terminal)
-$ kubectl port-forward -n monitoring svc/prom-kube-prometheus-stack-prometheus 9090:9090
-# Open http://localhost:9090
-
-# Access Grafana UI (in a new terminal)
-$ kubectl port-forward -n monitoring svc/prom-grafana 3000:80
-# Open http://localhost:3000
-# Default credentials: admin / prom-operator
 ```
+
+**Access the monitoring UIs:**
+
+- **Prometheus**: http://localhost:30300
+- **Grafana**: http://localhost:30200
+  - Username: `admin`
+  - Password: `prom-operator`
+
+**Validate Monitoring Setup**
+
+Validate from Prometheus that the metrics are being sent to prometheus
+http://localhost:30300/targets
+
+![prometheus-targets-ex](assets/prometheus-target-ex.png)
+
+Also running queries in Prometheus UI to see if metrics are being collected:
+
+```promql
+http_requests_total
+
+histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket [1m])) by (le, handler))
+
+rate(http_request_size_bytes_sum[1m])
+```
+
+You can then create Grafana dashboards to visualize these metrics. Login to Grafana and setup in the following way:
+
+- Dashboard → New -> Import
+- In the box which appears as `Import via dashboard JSON model` paste the code from this [gist](https://gist.githubusercontent.com/initcron/ca57251c80bc2f4a2adde0a878ebc585/raw/f6fb4304ebb026725c8c4d0e54c37d87ae64cafb/enhanced_fastapi_ml_dashboard.json), paste and click on Load
+
+The dashboard should look like this:
+
+![grafana-ml-model-api-dashboard-ex](assets/grafana-ml-model-api-dashboard-ex.png)
+
+This provides the monitoring which is specific to model's performance in terms of latency, number of requests, error rates etc. which could be very useful for you to scale your inference later.
 
 **What's being monitored:**
 - FastAPI metrics exposed at `/metrics` endpoint (scraped every 15s)
