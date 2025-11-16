@@ -381,6 +381,21 @@ This provides the monitoring which is specific to model's performance in terms o
   - API latency (P95 threshold: 0.5 seconds)
   - Request rate (threshold: 1000 requests/minute)
 
+**Step 6: Install Vertical Pod Autoscaler (Optional)**
+
+VPA automatically adjusts CPU and memory requests/limits for optimal resource usage:
+
+```bash
+# Install VPA using the official repository
+$ git clone https://github.com/kubernetes/autoscaler.git && cd autoscaler/vertical-pod-autoscaler && ./hack/vpa-up.sh && rm -rf ../../autoscaler && cd -
+
+# Deploy VPA for the FastAPI deployment
+$ kubectl apply -f deployment/monitoring/model-vpa.yaml
+
+# Check VPA recommendations
+$ kubectl describe vpa model-vpa
+```
+
 
 ### How to use
 
