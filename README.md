@@ -5,7 +5,9 @@ A Machine Learning Operations (MLOps) project for predicting health insurances c
 1. **Backend API**: A FastAPI application that serves the machine learning model for predictions.
 2. **Frontend UI**: A Streamlit application that provides a user-friendly interface for interacting with the model.
 
-![Health Insurance Frontend](assets/streamlit-frontend-ml-app.png)    
+
+https://github.com/user-attachments/assets/222f500c-3c44-4e32-abea-6ea15a12228c
+
 
 ## Setup & Installation
 
