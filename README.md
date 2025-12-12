@@ -380,8 +380,8 @@ This provides the monitoring which is specific to model's performance in terms o
 **What's being monitored:**
 - FastAPI metrics exposed at `/metrics` endpoint (scraped every 15s)
 - KEDA autoscaling triggers based on:
-  - API latency (P95 threshold: 0.5 seconds)
-  - Request rate (threshold: 1000 requests/minute)
+  - API latency (P95 threshold: 0.08 seconds)
+  - Request rate (threshold: 20 requests/minute)
 
 **Step 6: Install Vertical Pod Autoscaler (Optional)**
 
