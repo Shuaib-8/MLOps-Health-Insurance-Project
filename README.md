@@ -28,18 +28,16 @@ https://github.com/user-attachments/assets/222f500c-3c44-4e32-abea-6ea15a12228c
 │   ├── kubernetes
 │   │   ├── fastapi-model-deploy.yaml       # FastAPI deployment configuration
 │   │   ├── fastapi-model-svc.yaml          # FastAPI service configuration
-│   │   ├── fastapi-scaledobject.yaml       # KEDA ScaledObject configuration for FastAPI deployment
+│   │   ├── fastapi-scaledobject.yaml       # KEDA ScaledObject for autoscaling (requires KEDA)
 │   │   ├── kind-three-node-cluster.yaml    # KIND configuration file to create a local k8s cluster with 3 nodes
 │   │   ├── kustomization.yaml              # Kustomize configuration file to run required k8s manifests
+│   │   ├── servicemonitor.yaml             # Prometheus ServiceMonitor (requires kube-prometheus-stack)
 │   │   ├── streamlit-deploy.yaml           # Streamlit deployment configuration
 │   │   └── streamlit-svc.yaml              # Streamlit service configuration
 │   ├── mlflow
 │   │   └── mlflow-docker-compose.yaml
 │   └── monitoring
-│       ├── fastapi-scaledobject.yaml
-│       ├── model-vpa.yaml
-│       ├── predict.json
-│       └── servicemonitor.yaml
+│       └── predict.json                    # Sample prediction payload for testing
 ├── docker-compose.yml                      # Docker Compose file to run both FastAPI and Streamlit apps
 ├── Dockerfile.api                          # Dockerfile for FastAPI backend
 ├── Dockerfile.streamlit                    # Dockerfile for Streamlit frontend
@@ -302,10 +300,7 @@ $ helm install keda kedacore/keda --namespace keda --create-namespace
 # Verify KEDA is running
 $ kubectl get pods -n keda
 
-# Deploy the ScaledObject for FastAPI autoscaling
-$ kubectl apply -f deployment/monitoring/fastapi-scaledobject.yaml
-
-# Verify ScaledObject is created
+# Verify ScaledObject is created (deployed via kustomize in Step 2)
 $ kubectl get scaledobject
 ```
 
@@ -338,8 +333,8 @@ $ kubectl get all -n monitoring
 # Verify Prometheus stack pods are running
 $ kubectl get pods -n monitoring
 
-# Deploy ServiceMonitor to scrape FastAPI metrics
-$ kubectl apply -f deployment/monitoring/servicemonitor.yaml
+# Verify ServiceMonitor is created (deployed via kustomize in Step 2)
+$ kubectl get servicemonitor
 ```
 
 **Access the monitoring UIs:**
