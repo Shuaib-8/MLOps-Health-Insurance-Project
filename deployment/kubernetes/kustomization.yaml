@@ -26,6 +26,10 @@ resources:
   - streamlit-deploy.yaml
   - streamlit-svc.yaml
 
+  # Monitoring & Autoscaling (requires KEDA and Prometheus Operator CRDs)
+  - servicemonitor.yaml
+  - fastapi-scaledobject.yaml
+
 # Common labels applied to all resources
 # Note: Using 'labels' field (recommended) instead of deprecated 'commonLabels'
 labels:
