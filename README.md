@@ -487,7 +487,36 @@ $ git commit -m "Update streamlit replicas"
 $ git push origin release
 
 # 3. Watch ArgoCD sync the change automatically in the UI
+$ kubectl rollout restart deployment streamlit-latest # streamlit deployment name
+$ kubectl rollout restart deployment api # fastapi deployment name
 ```
+
+**Note:** When using this GitOps workflow, ensure the Docker Hub images referenced in `deployment/kubernetes/kustomization.yaml` match the images built by your CI pipeline. The current setup uses:
+- `shuaiba8/fastapi:latest` - FastAPI backend
+- `shuaiba8/streamlit:latest-v2` - Streamlit frontend
+
+If you fork this repository or use different image names in CI, update the `images` section in `kustomization.yaml` accordingly. If you are using a different Docker Hub username, update the commands accordingly.
+
+You may need to remove the image while in the k8s cluster using crictl:
+```bash
+$ crictl rmi <docker-hub-username>/fastapi:latest
+$ crictl rmi <docker-hub-username>/streamlit:latest-v2
+```
+
+You can also remove the image from the Docker Hub using the following command:
+```bash
+$ docker rmi <docker-hub-username>/fastapi:latest
+$ docker rmi <docker-hub-username>/streamlit:latest-v2
+```
+Then rebuild the image and push it to the Docker Hub using the following commands:
+```bash
+$ docker build -t <docker-hub-username>/fastapi:latest -f Dockerfile.api .
+$ docker build -t <docker-hub-username>/streamlit:latest-v2 -f Dockerfile.streamlit .
+$ docker push <docker-hub-username>/fastapi:latest
+$ docker push <docker-hub-username>/streamlit:latest-v2
+```
+
+Changes made to the Kubernetes manifests in `deployment/kubernetes/` will be automatically synced to the cluster by ArgoCD.
 
 
 ### How to use
