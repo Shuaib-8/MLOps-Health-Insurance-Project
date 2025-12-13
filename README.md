@@ -444,6 +444,49 @@ Verify ArgoCD UI is running after logging in with the username and password:
 
 ![argo-cd-landing-page](assets/argocd-landing-page-ui.png)
 
+**Using ArgoCD for GitOps Deployment**
+
+Once ArgoCD is installed, configure an application via the ArgoCD UI with the following settings:
+
+| Setting | Value |
+|---------|-------|
+| Application Name | `healthinsuranceml` |
+| Project | `default` |
+| Repository URL | `https://github.com/<your-username>/mlops-health-insurance-proj.git` |
+| Revision | `release` (or `main`) |
+| Path | `deployment/kubernetes` |
+| Cluster URL | `https://kubernetes.default.svc` |
+| Namespace | `default` |
+| Sync Policy | Automatic (with Prune and Self-Heal enabled) |
+
+The GitOps workflow operates as follows:
+
+1. **Make changes** to Kubernetes manifests in `deployment/kubernetes/`
+2. **Commit and push** changes to the `release` branch
+3. **ArgoCD auto-syncs** within ~3 minutes (or click "Refresh" in UI)
+4. **Verify** deployment status shows "Synced" and "Healthy"
+
+To manually trigger a sync:
+
+```bash
+# Using ArgoCD CLI (optional - install from https://argo-cd.readthedocs.io/en/stable/cli_installation/)
+$ argocd app sync healthinsuranceml
+
+# Or use the "SYNC" button in ArgoCD UI at https://localhost:32100
+```
+
+To test the GitOps workflow:
+
+```bash
+# 1. Make a change (e.g., update replica count in streamlit-deploy.yaml)
+# 2. Commit and push to release branch
+$ git add deployment/kubernetes/streamlit-deploy.yaml
+$ git commit -m "Update streamlit replicas"
+$ git push origin release
+
+# 3. Watch ArgoCD sync the change automatically in the UI
+```
+
 
 ### How to use
 
