@@ -446,6 +446,8 @@ Verify ArgoCD UI is running after logging in with the username and password:
 
 **Using ArgoCD for GitOps Deployment**
 
+**N.B.: Examples are illustrative only. To actually perform these and get the full benefit of ArgoCD, you will need to create a new repository and push the changes to it. You may want to fork this repository and use your own repository for the GitOps workflow.**
+
 Once ArgoCD is installed, configure an application via the ArgoCD UI with the following settings:
 
 | Setting | Value |
