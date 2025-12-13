@@ -378,22 +378,7 @@ This provides the monitoring which is specific to model's performance in terms o
   - API latency (P95 threshold: 0.08 seconds)
   - Request rate (threshold: 20 requests/minute)
 
-**Step 6: Install Vertical Pod Autoscaler (Optional)**
-
-VPA automatically adjusts CPU and memory requests/limits for optimal resource usage:
-
-```bash
-# Install VPA using the official repository
-$ git clone https://github.com/kubernetes/autoscaler.git && cd autoscaler/vertical-pod-autoscaler && ./hack/vpa-up.sh && rm -rf ../../autoscaler && cd -
-
-# Deploy VPA for the FastAPI deployment
-$ kubectl apply -f deployment/monitoring/model-vpa.yaml
-
-# Check VPA recommendations
-$ kubectl describe vpa model-vpa
-```
-
-**Step 7: Install ArgoCD for GitOps Deployment (Optional)**
+**Step 6: Install ArgoCD for GitOps Deployment (Optional)**
 
 ArgoCD provides declarative, GitOps-based continuous deployment:
 
@@ -466,10 +451,7 @@ The GitOps workflow operates as follows:
 To manually trigger a sync:
 
 ```bash
-# Using ArgoCD CLI (optional - install from https://argo-cd.readthedocs.io/en/stable/cli_installation/)
-$ argocd app sync healthinsuranceml
-
-# Or use the "SYNC" button in ArgoCD UI at https://localhost:32100
+# Use the "SYNC" button in ArgoCD UI at https://localhost:32100
 ```
 
 To test the GitOps workflow:
