@@ -473,7 +473,7 @@ $ kubectl rollout restart deployment api # fastapi deployment name
 If you fork this repository or use different image names in CI, update the `images` section in `kustomization.yaml` accordingly. If you are using a different Docker Hub username, update the commands accordingly.
 
 <details>
-<summary><b>Updating Docker Images (Click to expand)</b></summary>
+<summary><b>Updating Docker Images</b></summary>
 
 You may need to remove the image while in the k8s cluster using crictl:
 ```bash
@@ -599,3 +599,12 @@ $ kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd
 # Delete the KIND cluster
 $ kind delete cluster --name health-insurance-mlops
 ```
+
+### References
+
+The following resources were instrumental in the development of this project:
+
+- [Docker and Kubernetes solutions | School of DevOps](https://kubernetes-tutorial.schoolofdevops.com/#docker-and-kubernetes-solutions)
+- [School of DevOps | MLOps Bootcamp](https://schoolofdevops.com/programs/mlops-bootcamp-2/)
+- [MLOPs Bootcamp github repository](https://github.com/PacktPublishing/DevOps-to-MLOps-Bootcamp-Build-Deploy-ML-Systems-End-to-End)
+- [Kaggle Dataset | Health Insurance Charges US Dataset](https://www.kaggle.com/datasets/mirichoi0218/insurance)
