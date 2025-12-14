@@ -468,11 +468,12 @@ $ kubectl rollout restart deployment streamlit-latest # streamlit deployment nam
 $ kubectl rollout restart deployment api # fastapi deployment name
 ```
 
-**Note:** When using this GitOps workflow, ensure the Docker Hub images referenced in `deployment/kubernetes/kustomization.yaml` match the images built by your CI pipeline. The current setup uses:
-- `shuaiba8/fastapi:latest` - FastAPI backend
-- `shuaiba8/streamlit:latest-v2` - Streamlit frontend
+**Note:** When using this GitOps workflow, ensure Docker Hub images in `deployment/kubernetes/kustomization.yaml` match your CI pipeline. The current setup uses `shuaiba8/fastapi:latest` and `shuaiba8/streamlit:latest-v2`. 
 
 If you fork this repository or use different image names in CI, update the `images` section in `kustomization.yaml` accordingly. If you are using a different Docker Hub username, update the commands accordingly.
+
+<details>
+<summary><b>Updating Docker Images (Click to expand)</b></summary>
 
 You may need to remove the image while in the k8s cluster using crictl:
 ```bash
@@ -480,27 +481,20 @@ $ crictl rmi <docker-hub-username>/fastapi:latest
 $ crictl rmi <docker-hub-username>/streamlit:latest-v2
 ```
 
-You can also remove the image from the Docker Hub using the following command:
+You can also remove the image from Docker using:
 ```bash
 $ docker rmi <docker-hub-username>/fastapi:latest
 $ docker rmi <docker-hub-username>/streamlit:latest-v2
 ```
-Then rebuild the image and push it to the Docker Hub using the following commands:
+
+Then rebuild the image and push it to Docker Hub:
 ```bash
 $ docker build -t <docker-hub-username>/fastapi:latest -f Dockerfile.api .
 $ docker build -t <docker-hub-username>/streamlit:latest-v2 -f Dockerfile.streamlit .
 $ docker push <docker-hub-username>/fastapi:latest
 $ docker push <docker-hub-username>/streamlit:latest-v2
 ```
+</details>
 
-Changes made to the Kubernetes manifests in `deployment/kubernetes/` will be automatically synced to the cluster by ArgoCD.
-
-
-### How to use
-
-### Testing 
-
-### References
-
-The following resources were instrumental in the development of this project:
+Changes to Kubernetes manifests in `deployment/kubernetes/` are automatically synced by ArgoCD.
 
