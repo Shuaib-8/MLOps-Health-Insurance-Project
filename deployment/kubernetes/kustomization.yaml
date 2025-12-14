@@ -1,5 +1,6 @@
 # Kustomize configuration for MLOps Health Insurance Project
 # This base configuration manages core application deployments and services
+# Note: Autoscaling (KEDA ScaledObject) is deployed separately after KEDA installation
 #
 # Usage:
 #   kubectl apply -k deployment/kubernetes/
@@ -21,12 +22,13 @@ resources:
   - fastapi-model-deploy.yaml
   - fastapi-model-svc.yaml
 
-  # KEDA Autoscaling
-  - fastapi-scaledobject.yaml
-
   # Streamlit Frontend
   - streamlit-deploy.yaml
   - streamlit-svc.yaml
+
+  # Monitoring & Autoscaling (requires KEDA and Prometheus Operator CRDs)
+  - servicemonitor.yaml
+  - fastapi-scaledobject.yaml
 
 # Common labels applied to all resources
 # Note: Using 'labels' field (recommended) instead of deprecated 'commonLabels'

@@ -1,10 +1,14 @@
 import datetime
 import os
 import socket
-from unittest import result 
 
+from dotenv import load_dotenv
 import streamlit as st
 import requests
+
+# Load environment variables from .env file (for local development)
+# This will not override existing environment variables (e.g., from Docker/K8s)
+load_dotenv()
 
 # Page configuration
 st.set_page_config(
@@ -120,9 +124,12 @@ with col2:
 
                 # Make API request
                 API_ENDPOINT = os.getenv("API_ENDPOINT", "http://api:8000")
+                # Display endpoint for user-facing URLs (falls back to actual endpoint if not set)
+                API_ENDPOINT_DISPLAY = os.getenv("API_ENDPOINT_DISPLAY", API_ENDPOINT)
                 predict_url = f"{API_ENDPOINT}/predict"
+                display_url = f"{API_ENDPOINT_DISPLAY}/predict"
 
-                st.write(f"Sending request to API at: {predict_url}")  # Debug line
+                st.write(f"Sending request to API at: {display_url}")  # Shows user-accessible URL
 
 
                 response = requests.post(
