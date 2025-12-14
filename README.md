@@ -498,3 +498,104 @@ $ docker push <docker-hub-username>/streamlit:latest-v2
 
 Changes to Kubernetes manifests in `deployment/kubernetes/` are automatically synced by ArgoCD.
 
+**Troubleshooting**
+
+<details>
+<summary><b>Connection Refused Error</b></summary>
+
+If you see `dial tcp 127.0.0.1:26443: connect: connection refused`:
+
+```bash
+# Check cluster exists and Docker containers are running
+$ kind get clusters
+$ docker ps --filter "name=health-insurance-mlops"
+
+# If not running, recreate the cluster
+$ kind delete cluster --name health-insurance-mlops
+$ kind create cluster --name health-insurance-mlops --config deployment/kubernetes/kind-three-node-cluster.yaml
+
+# Verify kubectl context
+$ kubectl config use-context kind-health-insurance-mlops
+```
+</details>
+
+<details>
+<summary><b>Cluster Creation Fails</b></summary>
+
+```bash
+# Ensure Docker is running
+$ docker info
+
+# Delete existing cluster and retry
+$ kind delete cluster --name health-insurance-mlops
+$ kind create cluster --name health-insurance-mlops --config deployment/kubernetes/kind-three-node-cluster.yaml
+```
+</details>
+
+<details>
+<summary><b>Port Conflicts</b></summary>
+
+If ports 30000, 30100, etc. are in use:
+
+```bash
+# Check what's using the ports
+$ lsof -i :30000
+$ lsof -i :30100
+
+# Delete conflicting KIND cluster
+$ kind get clusters
+$ kind delete cluster --name <conflicting-cluster-name>
+```
+</details>
+
+<details>
+<summary><b>Pods Not Starting</b></summary>
+
+```bash
+# Check pod status
+$ kubectl get pods -A
+
+# Debug specific pod
+$ kubectl describe pod <pod-name>
+$ kubectl logs <pod-name>
+
+# For image pull issues
+$ docker pull shuaiba8/fastapi:latest
+$ docker pull shuaiba8/streamlit:latest-v2
+```
+</details>
+
+<details>
+<summary><b>KEDA Autoscaling Not Working</b></summary>
+
+```bash
+# Verify KEDA is installed
+$ kubectl get pods -n keda
+
+# Check ScaledObject status
+$ kubectl get scaledobject
+$ kubectl describe scaledobject fastapi-latency-autoscaler
+
+# Ensure Prometheus is running
+$ kubectl get pods -n monitoring
+```
+</details>
+
+**Cleanup**
+
+To remove all resources and delete the cluster:
+
+```bash
+# Delete application resources (includes ServiceMonitor and ScaledObject)
+$ kubectl delete -k deployment/kubernetes/
+
+# Uninstall Helm releases
+$ helm uninstall prom -n monitoring
+$ helm uninstall keda -n keda
+
+# Delete ArgoCD
+$ kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Delete the KIND cluster
+$ kind delete cluster --name health-insurance-mlops
+```
