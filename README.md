@@ -377,6 +377,10 @@ This provides the monitoring which is specific to model's performance in terms o
 - KEDA autoscaling triggers based on:
   - API latency (P95 threshold: 0.08 seconds)
   - Request rate (threshold: 20 requests/minute)
+ 
+See the demo below which shows **autoscaling** being used effectively upon using `Hey` for **load testing** (200 parallel clients, for 3 minutes, to repeatedly send POST requests with JSON data from `predict.json`) to the local `/predict` API endpoint.
+
+https://github.com/user-attachments/assets/0e7d4f17-d240-4aec-8428-f8ccff1ab99f
 
 **Step 6: Install ArgoCD for GitOps Deployment (Optional)**
 
@@ -441,6 +445,14 @@ Once ArgoCD is installed, configure an application via the ArgoCD UI with the fo
 | Namespace | `default` |
 | Sync Policy | Automatic (with Prune and Self-Heal enabled) |
 
+See the demo below, which shows how to configure **ArgoCD via the UI in a K8s cluster** using the recommended settings. 
+
+
+
+https://github.com/user-attachments/assets/6769921b-fea0-4a1e-81aa-1828c8a24a63
+
+
+
 The GitOps workflow operates as follows:
 
 1. **Make changes** to Kubernetes manifests in `deployment/kubernetes/`
@@ -458,7 +470,7 @@ To test the GitOps workflow:
 
 ```bash
 # 1. Make a change (e.g., update replica count in streamlit-deploy.yaml)
-# 2. Commit and push to release branch
+# 2. Commit and push to the release branch
 $ git add deployment/kubernetes/streamlit-deploy.yaml
 $ git commit -m "Update streamlit replicas"
 $ git push origin release
@@ -606,5 +618,5 @@ The following resources were instrumental in the development of this project:
 
 - [Docker and Kubernetes solutions | School of DevOps](https://kubernetes-tutorial.schoolofdevops.com/#docker-and-kubernetes-solutions)
 - [School of DevOps | MLOps Bootcamp](https://schoolofdevops.com/programs/mlops-bootcamp-2/)
-- [MLOPs Bootcamp github repository](https://github.com/PacktPublishing/DevOps-to-MLOps-Bootcamp-Build-Deploy-ML-Systems-End-to-End)
+- [MLOps Bootcamp github repository](https://github.com/PacktPublishing/DevOps-to-MLOps-Bootcamp-Build-Deploy-ML-Systems-End-to-End)
 - [Kaggle Dataset | Health Insurance Charges US Dataset](https://www.kaggle.com/datasets/mirichoi0218/insurance)
